@@ -281,12 +281,12 @@ If anything goes wrong, I can restore from this backup instantly.
 ---
 
 ## What I Learned
-**VMware Virtualization**
-**pfSense Firewall Administration**
-**Windows 11 Administration**
-**Ubuntu Linux Administration**
-**Networking Fundamentals**
-**Network Segmentation**
+ - VMware Virtualization
+ - pfSense Firewall Administration
+ - Windows 11 Administration
+ - Ubuntu Linux Administration
+ - Networking Fundamentals
+ - Network Segmentation
 
 ---
 
