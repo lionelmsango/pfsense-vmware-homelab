@@ -28,7 +28,7 @@ I set up a complete home lab environment with pfSense firewall to learn network 
 
 Here's the network I built:
 
-![Network Diagram](screenshots/08-final/42-network-diagram.png)
+
 
 **Logical Layout:**
 ```
@@ -70,5 +70,5 @@ Windows 11  Ubuntu
 - Internal Network: 192.168.10.0/24
 - DHCP Range: 192.168.10.100-200
 - Gateway: 192.168.10.1 (pfSense)
-- DNS Servers: 8.8.8.8, 8.8.4.4 (Google)
+- DNS Servers: 8.8.8.8, 8.8.8.8 (Google)
 - Total Available IPs: 254
