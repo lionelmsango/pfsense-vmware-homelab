@@ -201,6 +201,143 @@ i then tested to confirm that both operating systems could communicate with each
 
 ![Windows to Ubuntu Communication](https://github.com/lionelmsango/pfsense-vmware-homelab/blob/5bf43e56bab2482bb5b500f2eae96ee48894b54e/Screenshots/06-test-vms-18-win-to-ubuntu-ping.png.jpg)
 
+---
+
+## Firewall Configuration
+
+### Accessing the Web Interface
+Inorder to configure pfsense via the web GUI,  I opened Edge from my windows VM and went to `https://192.168.10.1`. After logging in, a setup wizard guided me through initial configuration. 
+
+**Setup Wizard Steps:**
+1. Set hostname and domain (pfsense.localdomain)
+2. Configured DNS servers (8.8.8.8, 8.8.4.4)
+3. Selected timezone
+4. Verified WAN interface (DHCP from VMware)
+5. Confirmed LAN interface (192.168.10.1/24)
+6. **Changed admin password** (security!)
+7. Reloaded configuration
+
+pfSense came with two default rules:
+1. **Anti-Lockout Rule** - Ensures I can always access the web interface (blocks me from locking myself out)
+2. **Default Allow LAN to Any** - Allows all traffic from LAN to anywhere
+
+This is why my test VMs could access the internet immediately - everything was allowed by default. Now I needed to create more specific rules.
+
+---
+
+### Creating Custom Firewall Rules
+
+To learn how firewall rules work, I created a test rule to block ICMP traffic between my VMs.
+
+**Rule 1: Block Windows → Ubuntu (ICMP)**
+
+Configuration:
+- Action: **Block**
+- Interface: **LAN**
+- Protocol: **ICMP**
+- Source: Single host → 192.168.10.100 (Windows)
+- Destination: Single host → 192.168.10.101 (Ubuntu)
+- Description: "Block Windows to Ubuntu ICMP - Test Rule"
+
+After saving and applying changes, the rule was active. 
+
+![Block Rule Created](https://github.com/lionelmsango/pfsense-vmware-homelab/blob/d5161e092a6da118c306ba4e926f34458fa5e3b2/Screenshots/Screenshot_35_Blocked%20rule%20created.jpg)
+
+---
+
+### Testing the Firewall Rule
+
+From Windows PowerShell, I tried to ping Ubuntu. 
+**Result:** ❌ Request timed out! The firewall blocked it. 
+Then I tested internet access: 
+**Result:** ✅ Success! Internet still worked.
+
+This proved my firewall rule was working exactly as intended, blocking specific traffic while allowing everything else.
+
+![Rule Testing](https://github.com/lionelmsango/pfsense-vmware-homelab/blob/d5161e092a6da118c306ba4e926f34458fa5e3b2/Screenshots/Screenshot_36_ping%20blocked%2C%20internet%20works.jpg)
+
+---
+
+### Configuration Backup
+
+I backed up the pfSense configuration for safekeeping.
+
+**Backup Process:**
+1. Diagnostics → Backup & Restore
+2. Downloaded configuration as XML
+3. Saved to project folder: `config-pfsense-backup.xml`
+
+This backup includes:
+- All interface configurations
+- Firewall rules
+- DHCP settings
+- DNS settings
+- System settings
+
+If anything goes wrong, I can restore from this backup instantly.
+
+![Configuration Backup](https://github.com/lionelmsango/pfsense-vmware-homelab/blob/d5161e092a6da118c306ba4e926f34458fa5e3b2/Screenshots/screenshot_40_Configuration%20backup%20downloaded.jpg)
+
+---
+
+## What I Learned
+**VMware Virtualization**
+**pfSense Firewall Administration**
+**Windows 11 Administration**
+**Ubuntu Linux Administration**
+**Networking Fundamentals**
+**Network Segmentation**
+
+---
+
+### Challenges I Overcame
+
+**Challenge 1: Dual Network Adapters**
+
+**Problem:** I initially forgot to add the second network adapter to the pfSense VM. When I booted up, pfSense couldn't find a LAN interface and wouldn't proceed with setup.
+
+**Solution:** I had to shut down the VM, go to VM settings, add a second network adapter, and configure it to use VMnet2 (custom virtual network).
+
+**Lesson:** Always verify hardware requirements before starting installation. pfSense specifically needs two interfaces - it won't work with just one. Reading the documentation first would have saved me 15 minutes!
+
+**Challenge 5: Firewall Rule Order**
+
+**Problem:** When I created my allow rule after the block rule, it didn't work. Ubuntu still couldn't ping Windows because the block rule was being processed first.
+
+**Solution:** I learned that pfSense processes firewall rules from top to bottom. I had to move the allow rule above the block rule using the drag handles in the web interface.
+
+**Lesson:** Rule order is critical in firewall configuration. More specific rules should generally come before more general rules. This is fundamental to how packet filtering works in any firewall.
+
+---
+
+
+---
+
+## Next Steps
+
+Now that I have a working pfSense lab, I want to expand it:
+
+**Short-term:**
+- [ ] Add more complex firewall rules (port forwarding, NAT rules)
+- [ ] Set up VLANs for further network segmentation (Guest, Office, Servers)
+- [ ] Configure firewall aliases for easier rule management
+- [ ] Implement bandwidth limiting (QoS)
+
+**Medium-term:**
+- [ ] Add a second pfSense for site-to-site VPN (simulate Bonn-Berlin connection!)
+- [ ] Configure OpenVPN for remote access
+- [ ] Set up pfBlockerNG for ad blocking and threat blocking
+- [ ] Implement IDS/IPS (Snort or Suricata)
+
+**Long-term:**
+- [ ] Build complete enterprise network simulation
+- [ ] Add Windows Active Directory server
+- [ ] Create DMZ for public-facing services
+- [ ] Implement high availability (failover)
+- [ ] Add network monitoring (pfSense Dashboard)
+
+---
+
 
 
 
