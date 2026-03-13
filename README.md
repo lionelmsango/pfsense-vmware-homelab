@@ -72,3 +72,5 @@ Windows 11  Ubuntu
 - Gateway: 192.168.10.1 (pfSense)
 - DNS Servers: 8.8.8.8, 8.8.8.8 (Google)
 - Total Available IPs: 254
+
+- 
